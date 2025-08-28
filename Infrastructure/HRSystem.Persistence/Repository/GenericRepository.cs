@@ -1,0 +1,61 @@
+﻿using HRSystem.Application.Interfaces;
+using HRSystem.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
+namespace HRSystem.Persistence.Repository
+{
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    {
+        private readonly AppDbContext _context;
+        private readonly DbSet<T> _dbSet;
+
+        public GenericRepository(AppDbContext context)
+        {
+            _context = context;
+            _dbSet = _context.Set<T>();
+        }
+
+        public async Task AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public void Delete(T entity)
+        {
+            _dbSet.Remove(entity);
+            _context.SaveChanges();
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
+
+        public async Task<T> GetByIdAsync(int id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+
+        public void Update(T entity)
+        {
+            _dbSet.Update(entity);
+            _context.SaveChanges();
+        }
+
+        // Repository generic olduğu için tüm entity’lerde kullanabilirsin.
+        //Async metotlarla database işlemlerini yapıyoruz.
+        //SaveChangesAsync / SaveChanges çağrıları veritabanına kaydeder.
+        // Açıklamalar:
+        //GenericRepository<T> class’tır, interface’i implement eder.
+        //_context.Set<T>() → hangi entity tipi kullanılıyorsa onun DbSet’ini alır.
+        //AddAsync, Update, Delete, GetAllAsync, GetByIdAsync → CRUD işlemleri
+        //Artık UserService veya başka bir servis, repository üzerinden CRUD yapabilir.
+    }
+}
