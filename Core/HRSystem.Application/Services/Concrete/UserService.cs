@@ -1,16 +1,13 @@
 ﻿using HRSystem.Application.DTOS.UserDTO;
-using HRSystem.Domain.Entities;
 using HRSystem.Application.Services.Abstract;
-using System.Threading.Tasks;
+using HRSystem.Domain.Entities;
 using HRSystem.Application.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Text;
 using System;
-using System.Linq;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Collections.Generic;
 
 namespace HRSystem.Application.Services.Concrete
 {
@@ -23,22 +20,20 @@ namespace HRSystem.Application.Services.Concrete
             _userRepository = userRepository;
         }
 
-        // Implementation of IUserService.AllUsersAsync
-        public Task AllUsersAsync => GetAllUsersAsync();
-
         public async Task<ResultUserDTO> CreateUserAsync(CreateUserDTO dto)
         {
             using var hmac = new HMACSHA512();
-            var passwordSalt = hmac.Key;
-            var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password));
-
             var user = new User
             {
-                Username = dto.Username,
+                FullName = dto.FullName,
+                TcNo = dto.TcNo,
+                BirthDate = dto.BirthDate,
+                EmployeeNumber = dto.EmployeeNumber,
                 Email = dto.Email,
-                Role = dto.Role,
-                PasswordHash = Convert.ToBase64String(passwordHash),
-                PasswordSalt = Convert.ToBase64String(passwordSalt)
+                Department = dto.Department,
+                Position = dto.Position,
+                PasswordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password))),
+                PasswordSalt = Convert.ToBase64String(hmac.Key)
             };
 
             await _userRepository.AddAsync(user);
@@ -46,54 +41,29 @@ namespace HRSystem.Application.Services.Concrete
             return new ResultUserDTO
             {
                 Id = user.Id,
-                Username = user.Username,
+                FullName = user.FullName,
                 Email = user.Email,
-                Role = user.Role
+                Department = user.Department,
+                Position = user.Position
             };
         }
 
-        public async Task<ResultUserDTO> LoginUserAsync(LoginUserDTO dto)
+        public async Task<DetailUserDTO?> GetUserByIdAsync(int id)
         {
-            var user = (await _userRepository.GetAllAsync())
-                       .FirstOrDefault(u => u.Username == dto.Username);
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null) return null!; // null! => warning'i susturur
 
-            if (user == null)
-                return null;
-
-            using var hmac = new HMACSHA512(Convert.FromBase64String(user.PasswordSalt));
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password));
-            var computedHashString = Convert.ToBase64String(computedHash);
-
-            if (computedHashString != user.PasswordHash)
-                return null;
-
-            return new ResultUserDTO
+            return new DetailUserDTO
             {
                 Id = user.Id,
-                Username = user.Username,
+                FullName = user.FullName,
+                TcNo = user.TcNo,
+                BirthDate = user.BirthDate,
+                EmployeeNumber = user.EmployeeNumber,
                 Email = user.Email,
-                Role = user.Role
+                Department = user.Department,
+                Position = user.Position
             };
-        }
-
-        public string GenerateJwtToken(User user)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("YourSecretKey123!");
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Name, user.Username),
-                        new Claim(ClaimTypes.Role, user.Role)
-                }),
-                Expires = DateTime.UtcNow.AddHours(2),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
 
         public async Task<IEnumerable<ResultUserDTO>> GetAllUsersAsync()
@@ -102,14 +72,137 @@ namespace HRSystem.Application.Services.Concrete
             return users.Select(u => new ResultUserDTO
             {
                 Id = u.Id,
-                Username = u.Username,
+                FullName = u.FullName,
                 Email = u.Email,
-                Role = u.Role
+                Department = u.Department,
+                Position = u.Position
             });
         }
+
+        public async Task<ResultUserDTO?> UpdateUserAsync(UpdateUserDTO dto)
+        {
+            if (!dto.Id.HasValue) return null!; // Id null ise hiç işlem yapma
+
+            var user = await _userRepository.GetByIdAsync(dto.Id.Value); // burada .Value kullandık
+            if (user == null) return null!;
+
+            user.FullName = dto.FullName;
+            user.TcNo = dto.TcNo;
+            user.BirthDate = dto.BirthDate;
+            user.EmployeeNumber = dto.EmployeeNumber;
+            user.Email = dto.Email;
+            user.Department = dto.Department;
+            user.Position = dto.Position;
+
+            await _userRepository.UpdateAsync(user);
+
+            return new ResultUserDTO
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                Department = user.Department,
+                Position = user.Position
+            };
+        }
+
+        public async Task<bool> DeleteUserAsync(int id)
+        {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null) return false;
+
+            await _userRepository.DeleteAsync(user);
+            return true;
+        }
+
+        // Filter ve Search metodları
+        public async Task<IEnumerable<ResultUserDTO>> FilterUsersAsync(string department, string position)
+        {
+            var users = await _userRepository.GetAllAsync();
+            var filtered = users.Where(u =>
+                (string.IsNullOrEmpty(department) || u.Department == department) &&
+                (string.IsNullOrEmpty(position) || u.Position == position)
+            );
+
+            return filtered.Select(u => new ResultUserDTO
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email,
+                Department = u.Department,
+                Position = u.Position
+            });
+        }
+
+        public async Task<IEnumerable<ResultUserDTO>> SearchUsersAsync(string query)
+        {
+            var users = await _userRepository.GetAllAsync();
+            var searched = users.Where(u =>
+                (!string.IsNullOrEmpty(u.FullName) && u.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrEmpty(u.Email) && u.Email.Contains(query, StringComparison.OrdinalIgnoreCase))
+            );
+
+            return searched.Select(u => new ResultUserDTO
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email,
+                Department = u.Department,
+                Position = u.Position
+            });
+        }
+
+        public async Task<ResultUserDTO?> LoginUserAsync(LoginUserDTO dto)
+        {
+            var user = (await _userRepository.GetAllAsync()).FirstOrDefault(u => u.Email == dto.Email);
+            if (user == null) return null!;
+
+            using var hmac = new HMACSHA512(Convert.FromBase64String(user.PasswordSalt));
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password));
+
+            if (Convert.ToBase64String(computedHash) != user.PasswordHash)
+                return null!;
+
+            return new ResultUserDTO
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                Department = user.Department,
+                Position = user.Position
+            };
+        }
+        public async Task<ResultUserDTO> RegisterAsync(CreateUserDTO dto)
+        {
+            using var hmac = new HMACSHA512();
+            var user = new User
+            {
+                FullName = dto.FullName,
+                TcNo = dto.TcNo,
+                BirthDate = dto.BirthDate,
+                EmployeeNumber = dto.EmployeeNumber,
+                Email = dto.Email,
+                Department = dto.Department,
+                Position = dto.Position,
+                PasswordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password))),
+                PasswordSalt = Convert.ToBase64String(hmac.Key)
+            };
+
+            await _userRepository.AddAsync(user);
+
+            return new ResultUserDTO
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                Department = user.Department,
+                Position = user.Position
+            };
+        }
+
+
     }
 }
-
 
 //   Açıklamalar:
 //GetAllAsync() → tüm kullanıcıları alıyoruz ve FirstOrDefault ile username’e göre filtreliyoruz.

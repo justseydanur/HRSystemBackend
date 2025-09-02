@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace HRSystem.Persistence.Context
 {
@@ -13,6 +14,18 @@ namespace HRSystem.Persistence.Context
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
+    }
+    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    {
+        public AppDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+
+            // Buraya kendi SQL Server bağlantı stringini yaz
+            optionsBuilder.UseSqlServer("Server=.;Database=HRSystemDB;Trusted_Connection=True;TrustServerCertificate=True");
+
+            return new AppDbContext(optionsBuilder.Options);
+        }
     }
 }
     //Açıklamalar:

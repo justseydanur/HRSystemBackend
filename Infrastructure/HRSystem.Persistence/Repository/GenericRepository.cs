@@ -1,12 +1,8 @@
 ﻿using HRSystem.Application.Interfaces;
 using HRSystem.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace HRSystem.Persistence.Repository
 {
@@ -27,10 +23,10 @@ namespace HRSystem.Persistence.Repository
             await _context.SaveChangesAsync();
         }
 
-        public void Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -43,19 +39,20 @@ namespace HRSystem.Persistence.Repository
             return await _dbSet.FindAsync(id);
         }
 
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-
-        // Repository generic olduğu için tüm entity’lerde kullanabilirsin.
-        //Async metotlarla database işlemlerini yapıyoruz.
-        //SaveChangesAsync / SaveChanges çağrıları veritabanına kaydeder.
-        // Açıklamalar:
-        //GenericRepository<T> class’tır, interface’i implement eder.
-        //_context.Set<T>() → hangi entity tipi kullanılıyorsa onun DbSet’ini alır.
-        //AddAsync, Update, Delete, GetAllAsync, GetByIdAsync → CRUD işlemleri
-        //Artık UserService veya başka bir servis, repository üzerinden CRUD yapabilir.
     }
 }
+
+
+// Repository generic olduğu için tüm entity’lerde kullanabilirsin.
+//Async metotlarla database işlemlerini yapıyoruz.
+//SaveChangesAsync / SaveChanges çağrıları veritabanına kaydeder.
+// Açıklamalar:
+//GenericRepository<T> class’tır, interface’i implement eder.
+//_context.Set<T>() → hangi entity tipi kullanılıyorsa onun DbSet’ini alır.
+//AddAsync, Update, Delete, GetAllAsync, GetByIdAsync → CRUD işlemleri
+//Artık UserService veya başka bir servis, repository üzerinden CRUD yapabilir.

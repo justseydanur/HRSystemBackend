@@ -8,9 +8,14 @@ namespace HRSystem.Application.DTOS.UserDTO
 {
     public class CreateUserDTO
     {
-        public string Username { get; set; }       // Kullanıcı adı
-        public string Password { get; set; }       // Şifre (hashleme işlemi Service’de yapılacak)
-        public string Email { get; set; }          // Email adresi
-        public string Role { get; set; }           // Kullanıcı rolü (Admin, Employee vb.)
+        public string FullName { get; set; } = null!;
+        public string Password { get; set; } = null!;
+        public string TcNo { get; set; } = null!;
+        public DateTime? BirthDate { get; set; } = null!;
+        public string EmployeeNumber { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Department { get; set; } = null!;
+        public string Position { get; set; } = null!;
     }
+
 }

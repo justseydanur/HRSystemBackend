@@ -9,11 +9,16 @@ namespace HRSystem.Application.Services.Abstract
 {
     public interface IUserService
     {
-        Task AllUsersAsync { get; }
-
         Task<ResultUserDTO> CreateUserAsync(CreateUserDTO dto);
-
+        Task<ResultUserDTO> UpdateUserAsync(UpdateUserDTO dto);
+        Task<DetailUserDTO> GetUserByIdAsync(int id);
         Task<IEnumerable<ResultUserDTO>> GetAllUsersAsync();
+        Task<bool> DeleteUserAsync(int id);
         Task<ResultUserDTO> LoginUserAsync(LoginUserDTO dto);
+        Task<ResultUserDTO> RegisterAsync(CreateUserDTO dto);
+
+        // Yeni eklenen metodlar
+        Task<IEnumerable<ResultUserDTO>> FilterUsersAsync(string department, string position);
+        Task<IEnumerable<ResultUserDTO>> SearchUsersAsync(string query);
     }
 }

@@ -8,9 +8,10 @@ namespace HRSystem.Application.DTOS.UserDTO
 {
     public class ResultUserDTO
     {
-        public int Id { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Role { get; set; }
+        public int? Id { get; set; }
+        public string FullName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Department { get; set; } = null!;
+        public string Position { get; set; } = null!;
     }
 }

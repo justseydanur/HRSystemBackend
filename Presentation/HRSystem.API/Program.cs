@@ -1,14 +1,13 @@
-﻿// Ensure all 'using' directives are placed at the top of the file
-using HRSystem.Persistence.Context;
+﻿using HRSystem.Persistence.Context;
 using HRSystem.Persistence.Repository;
 using HRSystem.Application.Interfaces;
 using HRSystem.Application.Services.Concrete;
+using HRSystem.Application.Services.Abstract;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
-using HRSystem.Application.Services.Abstract;
-using Microsoft.OpenApi.Models; // Ensure this namespace is included for Swagger
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,25 +18,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    // JWT için Swagger auth
-    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        In = ParameterLocation.Header,
         Description = "JWT Authorization header using the Bearer scheme."
     });
 
-    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            new OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                Reference = new OpenApiReference
                 {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
                 }
             },
@@ -56,7 +54,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 // 5️⃣ JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+var secretKey = jwtSettings["SecretKey"] ?? "YourFallbackSecretKey123!";
+var key = Encoding.UTF8.GetBytes(secretKey);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -77,13 +76,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Build app
+// 6️⃣ Build app
 var app = builder.Build();
 
-// 6️⃣ Middleware sırası
+// 7️⃣ Middleware sırası
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(); // Ensure Swashbuckle.AspNetCore package is referenced in your project
+    app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "HRSystem API V1");
@@ -91,10 +90,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
