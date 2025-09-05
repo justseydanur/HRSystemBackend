@@ -38,7 +38,7 @@ namespace HRSystem.API.Controllers
         }
 
         [HttpGet("all")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetAllUsers([FromQuery] string department, [FromQuery] string position)
         {
             IEnumerable<ResultUserDTO> users;
@@ -53,7 +53,7 @@ namespace HRSystem.API.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -63,8 +63,9 @@ namespace HRSystem.API.Controllers
             return Ok(user);
         }
 
+        [AllowAnonymous]
         [HttpPut("update")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO dto)
         {
             var updatedUser = await _userService.UpdateUserAsync(dto);
@@ -75,7 +76,7 @@ namespace HRSystem.API.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var deleted = await _userService.DeleteUserAsync(id);
@@ -86,7 +87,7 @@ namespace HRSystem.API.Controllers
         }
 
         [HttpGet("filter")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> FilterUsers([FromQuery] string? department = null, [FromQuery] string? position = null)
         {
             var users = await _userService.FilterUsersAsync(department, position);
@@ -94,7 +95,7 @@ namespace HRSystem.API.Controllers
         }
 
         [HttpGet("search")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> SearchUsers([FromQuery] string query)
         {
             var users = await _userService.SearchUsersAsync(query);

@@ -9,12 +9,13 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// 1️⃣ Controllers
+// Controllers
 builder.Services.AddControllers();
 
-// 2️⃣ Swagger / OpenAPI
+// Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -39,20 +40,25 @@ builder.Services.AddSwaggerGen(c =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
 
-// 3️⃣ DbContext
+// DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 4️⃣ Dependency Injection
+// DI
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUserService, UserService>();
 
-// 5️⃣ JWT Authentication
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+
+// Generic repository DI (genelde tek satır yeter):
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+// JWT
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"] ?? "YourFallbackSecretKey123!";
 var key = Encoding.UTF8.GetBytes(secretKey);
@@ -76,20 +82,17 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 6️⃣ Build app
 var app = builder.Build();
 
-// 7️⃣ Middleware sırası
-if (app.Environment.IsDevelopment())
+// Swagger'ı her ortamda aç
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HRSystem API V1");
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "HRSystem API V1");
+    // c.RoutePrefix = string.Empty; // İstersen ana sayfayı Swagger yapar
+});
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Gerekirse açarsın
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
