@@ -13,5 +13,6 @@ namespace HRSystem.Application.DTOS.UserDTO
         public string Email { get; set; } = null!;
         public string Department { get; set; } = null!;
         public string Position { get; set; } = null!;
+        public object Role { get; set; }
     }
 }

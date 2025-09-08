@@ -3,6 +3,7 @@ using HRSystem.Application.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace HRSystem.API.Controllers
 {
@@ -11,12 +12,15 @@ namespace HRSystem.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ITokenServices _tokenService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ITokenServices tokenService)
         {
             _userService = userService;
+            _tokenService = tokenService;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] CreateUserDTO dto)
         {
@@ -27,16 +31,25 @@ namespace HRSystem.API.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO dto)
         {
-            var result = await _userService.LoginUserAsync(dto);
-            if (result == null)
+            var user = await _userService.LoginUserAsync(dto);
+            if (user == null)
                 return Unauthorized("Email veya şifre hatalı.");
 
-            return Ok(result);
+            // Token üret
+            string token = _tokenService.CreateToken((int)user.Id, user.Email, (string)user.Role);
+
+            return Ok(new
+            {
+                token,
+                user // kullanıcı bilgilerini de dönmek istersen
+            });
         }
 
+        [Authorize]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllUsers([FromQuery] string department, [FromQuery] string position)
         {
@@ -50,6 +63,7 @@ namespace HRSystem.API.Controllers
             return Ok(users);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
@@ -60,7 +74,7 @@ namespace HRSystem.API.Controllers
             return Ok(user);
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPut("update")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO dto)
         {
@@ -71,6 +85,7 @@ namespace HRSystem.API.Controllers
             return Ok(updatedUser);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -81,6 +96,7 @@ namespace HRSystem.API.Controllers
             return Ok("Kullanıcı başarıyla silindi.");
         }
 
+        [Authorize]
         [HttpGet("filter")]
         public async Task<IActionResult> FilterUsers([FromQuery] string? department = null, [FromQuery] string? position = null)
         {
@@ -88,6 +104,7 @@ namespace HRSystem.API.Controllers
             return Ok(users);
         }
 
+        [Authorize]
         [HttpGet("search")]
         public async Task<IActionResult> SearchUsers([FromQuery] string query)
         {
