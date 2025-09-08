@@ -24,7 +24,7 @@ namespace HRSystem.Persistence.Migrations
                 name: "Role",
                 table: "Users",
                 type: "nvarchar(max)",
-                nullable: false,
+                nullable: true,
                 defaultValue: "");
         }
 

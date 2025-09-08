@@ -169,7 +169,8 @@ namespace HRSystem.Application.Services.Concrete
                 FullName = user.FullName,
                 Email = user.email,
                 Department = user.Department,
-                Position = user.Position
+                Position = user.Position,
+                Role = user.Role
             };
         }
         public async Task<ResultUserDTO> RegisterAsync(CreateUserDTO dto)
