@@ -10,7 +10,7 @@ namespace HRSystem.Domain.Entities
         public string TCKimlik { get; set; } = null!;   // tckimlik
         public DateTime DogumTarihi { get; set; }       // dogumTarihi
         public string TelNo { get; set; } = null!;      // telNo
-        public string Email { get; set; } = null!;      // email
+        public string email { get; set; } = null!;      // email
         public string Position { get; set; } = null!;   // position
         public string WorkingStatus { get; set; } = null!; // workingStatus
         public string PersonnelPhoto { get; set; } = null!; // personnelPhoto

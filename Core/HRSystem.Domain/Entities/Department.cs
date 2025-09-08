@@ -8,7 +8,7 @@ namespace HRSystem.Domain.Entities
 
         [Required, MaxLength(100)]
         public string Name { get; set; } = null!;
-
+        public ICollection<Employee> Employees { get; set; } = new List<Employee>();
         public bool IsActive { get; set; } = true;
 
         // İleride Employee ilişkilendireceksen:

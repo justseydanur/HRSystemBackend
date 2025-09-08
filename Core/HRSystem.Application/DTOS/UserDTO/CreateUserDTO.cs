@@ -13,7 +13,7 @@ namespace HRSystem.Application.DTOS.UserDTO
         public string TcNo { get; set; } = null!;
         public DateTime? BirthDate { get; set; } = null!;
         public string EmployeeNumber { get; set; } = null!;
-        public string Email { get; set; } = null!;
+        public string email { get; set; } = null!;
         public string Department { get; set; } = null!;
         public string Position { get; set; } = null!;
     }

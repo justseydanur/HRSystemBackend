@@ -38,7 +38,6 @@ namespace HRSystem.API.Controllers
         }
 
         [HttpGet("all")]
-        //[Authorize]
         public async Task<IActionResult> GetAllUsers([FromQuery] string department, [FromQuery] string position)
         {
             IEnumerable<ResultUserDTO> users;
@@ -51,9 +50,7 @@ namespace HRSystem.API.Controllers
             return Ok(users);
         }
 
-
         [HttpGet("{id}")]
-        //[Authorize]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -65,7 +62,6 @@ namespace HRSystem.API.Controllers
 
         [AllowAnonymous]
         [HttpPut("update")]
-        //[Authorize]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDTO dto)
         {
             var updatedUser = await _userService.UpdateUserAsync(dto);
@@ -76,7 +72,6 @@ namespace HRSystem.API.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        //[Authorize]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var deleted = await _userService.DeleteUserAsync(id);
@@ -87,7 +82,6 @@ namespace HRSystem.API.Controllers
         }
 
         [HttpGet("filter")]
-        //[Authorize]
         public async Task<IActionResult> FilterUsers([FromQuery] string? department = null, [FromQuery] string? position = null)
         {
             var users = await _userService.FilterUsersAsync(department, position);
@@ -95,7 +89,6 @@ namespace HRSystem.API.Controllers
         }
 
         [HttpGet("search")]
-        //[Authorize]
         public async Task<IActionResult> SearchUsers([FromQuery] string query)
         {
             var users = await _userService.SearchUsersAsync(query);
@@ -103,17 +96,3 @@ namespace HRSystem.API.Controllers
         }
     }
 }
-
-//Açıklamalar
-//[ApiController] ve[Route] → Controller’ı API olarak tanımlar ve route ayarlar
-//DI ile Service → Constructor üzerinden IUserService inject edilir
-//Register endpoint → CreateUserAsync metodunu çağırır
-//Login endpoint → LoginUserAsync metodunu çağırır
-//Status kodları → Başarılı Ok(), başarısız BadRequest() veya Unauthorized()
-//Açıklamalar:
-//CreateUserAsync → register işlemi, şifre hash + salt ile saklanır, API’ye ResultUserDTO döner
-//LoginUserAsync → login işlemi, şifre doğrulama + JWT token üretir, token API’ye döner
-//Endpoint’ler artık güvenli ve standart HTTP status kodları ile çalışıyor:
-//Register başarısız → BadRequest()
-//Login başarısız → Unauthorized()
-//Başarılı → Ok()

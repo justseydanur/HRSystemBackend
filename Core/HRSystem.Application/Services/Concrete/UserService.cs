@@ -29,7 +29,7 @@ namespace HRSystem.Application.Services.Concrete
                 TcNo = dto.TcNo,
                 BirthDate = dto.BirthDate,
                 EmployeeNumber = dto.EmployeeNumber,
-                Email = dto.Email,
+                email = dto.email,
                 Department = dto.Department,
                 Position = dto.Position,
                 PasswordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password))),
@@ -42,7 +42,7 @@ namespace HRSystem.Application.Services.Concrete
             {
                 Id = user.Id,
                 FullName = user.FullName,
-                Email = user.Email,
+                Email = user.email,
                 Department = user.Department,
                 Position = user.Position
             };
@@ -57,10 +57,10 @@ namespace HRSystem.Application.Services.Concrete
             {
                 Id = user.Id,
                 FullName = user.FullName,
-                TcNo = user.TcNo,
+                TcNo = user.TcNo,   
                 BirthDate = user.BirthDate,
                 EmployeeNumber = user.EmployeeNumber,
-                Email = user.Email,
+                email = user.email,
                 Department = user.Department,
                 Position = user.Position
             };
@@ -73,7 +73,7 @@ namespace HRSystem.Application.Services.Concrete
             {
                 Id = u.Id,
                 FullName = u.FullName,
-                Email = u.Email,
+                Email = u.email,
                 Department = u.Department,
                 Position = u.Position
             });
@@ -90,7 +90,7 @@ namespace HRSystem.Application.Services.Concrete
             user.TcNo = dto.TcNo;
             user.BirthDate = dto.BirthDate;
             user.EmployeeNumber = dto.EmployeeNumber;
-            user.Email = dto.Email;
+            user.email = dto.Email;
             user.Department = dto.Department;
             user.Position = dto.Position;
 
@@ -100,7 +100,7 @@ namespace HRSystem.Application.Services.Concrete
             {
                 Id = user.Id,
                 FullName = user.FullName,
-                Email = user.Email,
+                Email = user.email,
                 Department = user.Department,
                 Position = user.Position
             };
@@ -128,7 +128,7 @@ namespace HRSystem.Application.Services.Concrete
             {
                 Id = u.Id,
                 FullName = u.FullName,
-                Email = u.Email,
+                Email = u.email,
                 Department = u.Department,
                 Position = u.Position
             });
@@ -139,14 +139,14 @@ namespace HRSystem.Application.Services.Concrete
             var users = await _userRepository.GetAllAsync();
             var searched = users.Where(u =>
                 (!string.IsNullOrEmpty(u.FullName) && u.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)) ||
-                (!string.IsNullOrEmpty(u.Email) && u.Email.Contains(query, StringComparison.OrdinalIgnoreCase))
+                (!string.IsNullOrEmpty(u.email) && u.email.Contains(query, StringComparison.OrdinalIgnoreCase))
             );
 
             return searched.Select(u => new ResultUserDTO
             {
                 Id = u.Id,
                 FullName = u.FullName,
-                Email = u.Email,
+                Email = u.email,
                 Department = u.Department,
                 Position = u.Position
             });
@@ -154,7 +154,7 @@ namespace HRSystem.Application.Services.Concrete
 
         public async Task<ResultUserDTO?> LoginUserAsync(LoginUserDTO dto)
         {
-            var user = (await _userRepository.GetAllAsync()).FirstOrDefault(u => u.Email == dto.Email);
+            var user = (await _userRepository.GetAllAsync()).FirstOrDefault(u => u.email == dto.Email);
             if (user == null) return null!;
 
             using var hmac = new HMACSHA512(Convert.FromBase64String(user.PasswordSalt));
@@ -167,7 +167,7 @@ namespace HRSystem.Application.Services.Concrete
             {
                 Id = user.Id,
                 FullName = user.FullName,
-                Email = user.Email,
+                Email = user.email,
                 Department = user.Department,
                 Position = user.Position
             };
@@ -181,7 +181,7 @@ namespace HRSystem.Application.Services.Concrete
                 TcNo = dto.TcNo,
                 BirthDate = dto.BirthDate,
                 EmployeeNumber = dto.EmployeeNumber,
-                Email = dto.Email,
+                email = dto.email,
                 Department = dto.Department,
                 Position = dto.Position,
                 PasswordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password))),
@@ -194,7 +194,7 @@ namespace HRSystem.Application.Services.Concrete
             {
                 Id = user.Id,
                 FullName = user.FullName,
-                Email = user.Email,
+                Email = user.email,
                 Department = user.Department,
                 Position = user.Position
             };

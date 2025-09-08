@@ -25,7 +25,7 @@ namespace HRSystem.Application.Services.Concrete
                 TCKimlik = e.TCKimlik,
                 DogumTarihi = e.DogumTarihi,
                 TelNo = e.TelNo,
-                Email = e.Email,
+                email = e.email,
                 Position = e.Position,
                 WorkingStatus = e.WorkingStatus,
                 PersonnelPhoto = e.PersonnelPhoto,
@@ -51,7 +51,7 @@ namespace HRSystem.Application.Services.Concrete
                 TCKimlik = e.TCKimlik,
                 DogumTarihi = e.DogumTarihi,
                 TelNo = e.TelNo,
-                Email = e.Email,
+                email = e.email,
                 Position = e.Position,
                 WorkingStatus = e.WorkingStatus,
                 PersonnelPhoto = e.PersonnelPhoto,
@@ -73,7 +73,7 @@ namespace HRSystem.Application.Services.Concrete
                 TCKimlik = dto.TCKimlik,
                 DogumTarihi = dto.DogumTarihi,
                 TelNo = dto.TelNo,
-                Email = dto.Email,
+                email = dto.email,
                 Position = dto.Position,
                 WorkingStatus = dto.WorkingStatus,
                 PersonnelPhoto = dto.PersonnelPhoto,
@@ -97,7 +97,7 @@ namespace HRSystem.Application.Services.Concrete
             entity.TCKimlik = dto.TCKimlik;
             entity.DogumTarihi = dto.DogumTarihi;
             entity.TelNo = dto.TelNo;
-            entity.Email = dto.Email;
+            entity.email = dto.email;
             entity.Position = dto.Position;
             entity.WorkingStatus = dto.WorkingStatus;
             entity.PersonnelPhoto = dto.PersonnelPhoto;

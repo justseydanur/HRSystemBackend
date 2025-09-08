@@ -10,7 +10,7 @@ namespace HRSystem.Application.DTOs.Employees
         public string TCKimlik { get; set; } = null!;
         public DateTime DogumTarihi { get; set; }
         public string TelNo { get; set; } = null!;
-        public string Email { get; set; } = null!;
+        public string email { get; set; } = null!;
         public string Position { get; set; } = null!;
         public string WorkingStatus { get; set; } = null!;
         public string PersonnelPhoto { get; set; } = null!;
