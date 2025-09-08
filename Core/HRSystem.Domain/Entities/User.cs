@@ -18,7 +18,6 @@ namespace HRSystem.Domain.Entities
         public string Position { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
         public string PasswordSalt { get; set; } = null!;
-
         public string Role { get; set; } = null!;
     }
 
