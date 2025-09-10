@@ -55,6 +55,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
+builder.Services.AddHttpContextAccessor();
+
+
 // Generic repository DI (genelde tek satır yeter):
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 

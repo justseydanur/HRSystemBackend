@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HRSystem.Application.DTOS.TokenDTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,10 @@ namespace HRSystem.Application.DTOS.UserDTO
 {
     public class ResultUserDTO
     {
-        public int? Id { get; set; }
+        public string accesToken { get; set; } = null!;
+        public string refreshToken { get; set; } = null!;
         public string FullName { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public string Department { get; set; } = null!;
-        public string Position { get; set; } = null!;
-        public object Role { get; set; }
+        public string email { get; set; } = null!;
+    
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HRSystem.Application.DTOS.TokenDTO;
+using HRSystem.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,8 @@ namespace HRSystem.Application.Services.Abstract
 {
     public interface ITokenServices
     {
-        string CreateToken(int userId, string email, string role);
+        string CreateToken(User user);
+        Task<TokenResponseDTO> CreateTokenResponse(User? user);
+        Task<TokenResponseDTO?> RefreshTokensAsync(RefreshTokenRequestDTO request);
     }
 }

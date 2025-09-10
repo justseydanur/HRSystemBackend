@@ -8,13 +8,13 @@ namespace HRSystem.Application.DTOS.UserDTO
 {
     public class DetailUserDTO
     {
-        public int? Id { get; set; }
+        public int? id { get; set; }
         public string FullName { get; set; } = null!;
-        public string TcNo { get; set; } = null!;
-        public DateTime? BirthDate { get; set; }
-        public string EmployeeNumber { get; set; } = null!;
+        public string tckimlik { get; set; } = null!;
+        public DateTime? dogumTarihi { get; set; }
         public string email { get; set; } = null!;
-        public string Department { get; set; } = null!;
-        public string Position { get; set; } = null!;
+        public string departmentId { get; set; } = null!;
+        public string DepartmentName { get; set; } = null!;
+        public string position { get; set; } = null!;
     }
 }

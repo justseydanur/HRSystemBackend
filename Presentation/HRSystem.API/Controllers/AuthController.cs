@@ -1,4 +1,5 @@
-﻿using HRSystem.Application.Services.Abstract;
+﻿using HRSystem.Application.DTOS.TokenDTO;
+using HRSystem.Application.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRSystem.API.Controllers
@@ -14,19 +15,16 @@ namespace HRSystem.API.Controllers
             _tokenService = tokenService;
         }
 
-        public record LoginRequest(string Email, string Password);
-
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest req)
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<TokenResponseDTO>> RefreshToken(RefreshTokenRequestDTO request)
         {
-            // şimdilik fake kontrol (ileride DB’den)
-            if (req.Email == "admin@hr.com" && req.Password == "Admin123!")
-            {
-                var token = _tokenService.CreateToken(1, req.Email, "Admin");
-                return Ok(new { token });
-            }
+            var result = await _tokenService.RefreshTokensAsync(request);
+            if (result is null || result.accessToken is null || result.refreshToken is null)
+                return Unauthorized("Invalid refresh token.");
 
-            return Unauthorized(new { message = "Geçersiz kullanıcı" });
+            return Ok(result);
         }
+
+
     }
 }

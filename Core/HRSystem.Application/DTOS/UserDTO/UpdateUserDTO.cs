@@ -2,13 +2,19 @@
 
 public class UpdateUserDTO
 {
-    public int? Id { get; set; }
-    public string FullName { get; set; } = null!;
-    public string TcNo { get; set; } = null!;
-    public DateTime? BirthDate { get; set; }
-    public string EmployeeNumber { get; set; } = null!;
-    public string Email { get; set; } = null!;
-    public string Department { get; set; } = null!;
-    public string Position { get; set; } = null!;
+    
+
+    public int id { get; set; }
+    public string firstName { get; set; } = null!;
+    public string lastName { get; set; }
+    public string tckimlik { get; set; } = null!;
+    public DateTime? dogumTarihi { get; set; } = null!;
+    public string telNo { get; set; } = null!;
+    public string email { get; set; } = null!;
+    public string personnelPhoto { get; set; } = null!;
+    public string PasswordSalt { get; set; } = null!;
+
+    public string departmentId;
+    public string adres { get; set; } = null!;
 }
 

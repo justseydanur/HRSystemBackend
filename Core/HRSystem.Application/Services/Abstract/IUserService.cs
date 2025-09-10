@@ -15,10 +15,11 @@ namespace HRSystem.Application.Services.Abstract
         Task<IEnumerable<ResultUserDTO>> GetAllUsersAsync();
         Task<bool> DeleteUserAsync(int id);
         Task<ResultUserDTO?> LoginUserAsync(LoginUserDTO dto);
-        Task<ResultUserDTO> RegisterAsync(CreateUserDTO dto);
+        //Task<ResultUserDTO> RegisterAsync(CreateUserDTO dto);
 
         // Yeni eklenen metodlar
         Task<IEnumerable<ResultUserDTO>> FilterUsersAsync(string department, string position);
         Task<IEnumerable<ResultUserDTO>> SearchUsersAsync(string query);
+        Task<bool> DeleteUserAsync(string email);
     }
 }

@@ -27,10 +27,10 @@ namespace HRSystem.API.Controllers
             var result = await _userService.CreateUserAsync(dto);
             if (result == null)
                 return BadRequest("Kullanıcı oluşturulamadı.");
-
+            
             return Ok(result);
         }
-
+        
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO dto)
@@ -38,18 +38,10 @@ namespace HRSystem.API.Controllers
             var user = await _userService.LoginUserAsync(dto);
             if (user == null)
                 return Unauthorized("Email veya şifre hatalı.");
-
-            // Token üret
-            string token = _tokenService.CreateToken((int)user.Id, user.Email, (string)user.Role);
-
-            return Ok(new
-            {
-                token,
-                user // kullanıcı bilgilerini de dönmek istersen
-            });
+            return Ok(user);
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllUsers([FromQuery] string department, [FromQuery] string position)
         {
@@ -63,7 +55,7 @@ namespace HRSystem.API.Controllers
             return Ok(users);
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
@@ -87,9 +79,9 @@ namespace HRSystem.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(string email)
         {
-            var deleted = await _userService.DeleteUserAsync(id);
+            var deleted = await _userService.DeleteUserAsync(email);
             if (!deleted)
                 return NotFound("Silinecek kullanıcı bulunamadı.");
 

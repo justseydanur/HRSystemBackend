@@ -44,6 +44,11 @@ namespace HRSystem.Persistence.Repository
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }
 
